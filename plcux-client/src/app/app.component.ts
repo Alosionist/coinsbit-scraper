@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Market } from './models/market';
 
 @Component({
   selector: 'app-root',
@@ -6,4 +7,9 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+  marketName: string;
+
+  onMarketChoosen(marketName: string): void {
+    this.marketName = marketName;
+  }
 }

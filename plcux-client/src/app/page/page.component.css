@@ -1,7 +1,11 @@
-.prices {
+.page {
   width: 100%;
   border-radius: 10px;
   padding: 10px;
   min-height: 550px;
   border: 1px solid #99f;
+}
+
+h1 {
+  text-align: center;
 }

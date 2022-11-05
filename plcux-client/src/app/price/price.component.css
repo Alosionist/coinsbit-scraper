@@ -1,0 +1,17 @@
+.market {
+  display: block;
+  border: 1px solid rgb(170, 159, 221);
+  border-radius: 5px;
+  margin-bottom: 8px;
+  padding: 12px;
+}
+
+.market:hover {
+  background-color: #ddf;
+  transition: background-color 100ms linear;
+  cursor: pointer;
+}
+
+.price {
+  float: right;
+}

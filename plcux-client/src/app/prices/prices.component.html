@@ -1,1 +1,3 @@
-<p>prices works!</p>
+<div class="col-2 prices">
+  <app-price *ngFor="let market of markets" [market]="market" (click)="onClick(market.market)"></app-price>
+</div>

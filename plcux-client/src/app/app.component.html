@@ -1,1 +1,10 @@
-<app-prices></app-prices>
+<div class="container">
+  <div class="row">
+    <div class="col-3">
+      <app-prices (chosenMarket)="onMarketChoosen($event)"></app-prices>
+    </div>
+    <div class="col-9">
+      <app-page [marketName]="marketName"></app-page>
+    </div>
+  </div>
+</div>
