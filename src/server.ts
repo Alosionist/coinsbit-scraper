@@ -9,7 +9,9 @@ const PORT = process.env.PORT;
 
 startScraper();
 
-app.get('/markets/:market', (req, res) => {
+app.use('/', express.static('dist/client'))
+
+app.get('/api/markets/:market', (req, res) => {
   const market = req.params.market;
   
   if (!currentMarkets.has(market)) {
@@ -19,7 +21,7 @@ app.get('/markets/:market', (req, res) => {
   }
 });
 
-app.get('/markets/:market/history', async (req, res) => {
+app.get('/api/markets/:market/history', async (req, res) => {
   const market = req.params.market;
   const from = new Date(Number(req.query.from) || Date.now() - 86400000);
   const to = new Date(Number(req.query.to) || Date.now())
@@ -27,10 +29,10 @@ app.get('/markets/:market/history', async (req, res) => {
   res.json(await getHistory(market, from, to))
 });
 
-app.get('/markets', (req, res) => {
+app.get('/api/markets', (req, res) => {
   res.json(Array.from(currentMarkets.keys()));
 });
 
 app.listen(PORT, () => {
-  console.log('Server running on port 3000');
+  console.log('Server running on port ' + PORT);
 });

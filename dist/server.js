@@ -20,7 +20,8 @@ dotenv_1.default.config();
 const app = (0, express_1.default)();
 const PORT = process.env.PORT;
 (0, scraper_1.startScraper)();
-app.get('/markets/:market', (req, res) => {
+app.use('/', express_1.default.static('dist/client'));
+app.get('/api/markets/:market', (req, res) => {
     const market = req.params.market;
     if (!scraper_1.currentMarkets.has(market)) {
         res.status(404).send('Not found');
@@ -29,15 +30,15 @@ app.get('/markets/:market', (req, res) => {
         res.json({ market, price: scraper_1.currentMarkets.get(market) });
     }
 });
-app.get('/markets/:market/history', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.get('/api/markets/:market/history', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const market = req.params.market;
     const from = new Date(Number(req.query.from) || Date.now() - 86400000);
     const to = new Date(Number(req.query.to) || Date.now());
     res.json(yield (0, db_1.getHistory)(market, from, to));
 }));
-app.get('/markets', (req, res) => {
+app.get('/api/markets', (req, res) => {
     res.json(Array.from(scraper_1.currentMarkets.keys()));
 });
 app.listen(PORT, () => {
-    console.log('Server running on port 3000');
+    console.log('Server running on port ' + PORT);
 });
