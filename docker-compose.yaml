@@ -1,0 +1,14 @@
+version: '3'
+services:
+  scraper:
+    image: coinsbit-scraper:0.2.2
+    ports:
+      - 3000:3000
+    environment:
+      - MONGO_URL=mongodb://mongodb:27017
+  mongodb:
+    image: mongo:6.0.2
+    volumes:
+      - mongodb:/data/db
+volumes:
+  mongodb:
