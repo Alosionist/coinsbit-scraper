@@ -7,6 +7,7 @@ import { PageComponent } from './page/page.component';
 import { PriceComponent } from './price/price.component';
 import { HttpClientModule } from '@angular/common/http';
 import { ReplacePipe } from './replace.pipe';
+import { NgChartsModule } from 'ng2-charts';
 
 
 @NgModule({
@@ -19,7 +20,8 @@ import { ReplacePipe } from './replace.pipe';
   ],
   imports: [
     BrowserModule,
-    HttpClientModule
+    HttpClientModule,
+    NgChartsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

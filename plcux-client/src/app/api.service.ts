@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Market } from './models/market';
+import { DataPoint } from './models/dataPoint';
 
 
 @Injectable({
@@ -20,7 +21,7 @@ export class ApiService {
     return this.http.get<Market>(`${this.MARKETS}/${market}`);
   }
 
-  getHistory(market: string, from?: Date, to?: Date): Observable<Market[]> {
-    return this.http.get<Market[]>(`${this.MARKETS}/${market}/history`);
+  getHistory(market: string, from?: Date, to?: Date): Observable<DataPoint[]> {
+    return this.http.get<DataPoint[]>(`${this.MARKETS}/${market}/history`);
   }
 }
