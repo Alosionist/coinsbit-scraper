@@ -71,7 +71,12 @@ function connect() {
     }
 }
 function startScraper() {
-    connect();
+    try {
+        connect();
+    }
+    catch (error) {
+        console.error(error);
+    }
     setInterval(() => {
         connect();
     }, INTERVAL * 60 * 1000);

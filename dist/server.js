@@ -16,6 +16,7 @@ const express_1 = __importDefault(require("express"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const scraper_1 = require("./scraper");
 const db_1 = require("./db");
+const explorer_1 = require("./explorer");
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const PORT = process.env.PORT;
@@ -39,6 +40,25 @@ app.get('/api/markets/:market/history', (req, res) => __awaiter(void 0, void 0, 
 app.get('/api/markets', (req, res) => {
     res.json(Array.from(scraper_1.currentMarkets.keys()));
 });
+app.get('/api/explorer', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b;
+    try {
+        const address = ((_a = req.query.addr) === null || _a === void 0 ? void 0 : _a.toString()) || '';
+        const by = ((_b = req.query.by) === null || _b === void 0 ? void 0 : _b.toString()) || 'day';
+        if (by === 'day' && address !== '') {
+            res.json(yield (0, explorer_1.profitByDay)(address));
+        }
+        else if (by === 'month' && address !== '') {
+            res.json(yield (0, explorer_1.profitByMonth)(address));
+        }
+        else {
+            res.status(400).send('bad request');
+        }
+    }
+    catch (e) {
+        res.status(500).send('failed');
+    }
+}));
 app.listen(PORT, () => {
     console.log('Server running on port ' + PORT);
 });

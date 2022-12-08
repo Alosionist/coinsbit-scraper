@@ -21,7 +21,14 @@ export class ApiService {
     return this.http.get<Market>(`${this.MARKETS}/${market}`);
   }
 
-  getHistory(market: string, from?: Date, to?: Date): Observable<DataPoint[]> {
-    return this.http.get<DataPoint[]>(`${this.MARKETS}/${market}/history`);
+  getHistory(market: string, from?: number, to?: number): Observable<DataPoint[]> {
+    let query = '';
+    if (from) {
+      query += '?from=' + from;
+    }
+    if (to) {
+      query += '&to=' + to;
+    }
+    return this.http.get<DataPoint[]>(`${this.MARKETS}/${market}/history${query}`);
   }
 }

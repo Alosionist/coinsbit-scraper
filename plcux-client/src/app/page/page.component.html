@@ -1,8 +1,14 @@
 <div class="page">
-  <h1>{{marketName}}</h1>
-  <canvas baseChart
-      [data]="chartData"
-      [options]="chartOptions"
-      [type]="'line'">
-</canvas>
+  <h1>{{ marketNameView }}</h1>
+  <button type="button" class="btn btn-primary" (click)="refresh()">{{refreshBtnText}}</button>
+  <button
+    *ngFor="let b of buttons; index as i"
+    type="button"
+    class="btn"
+    [class]="b.class"
+    (click)="changeTimeRange(i)"
+  >
+    {{ b.text }}
+  </button>
+  <canvas id="MyChart">{{ chart }}</canvas>
 </div>
