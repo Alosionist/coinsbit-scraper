@@ -1,4 +1,4 @@
-import fetch from 'node-fetch';
+const axios = require("axios");
 const groupBy = require("group-by-with-sum");
 
 export async function profitByDay(address: string, type: string) {
@@ -15,9 +15,7 @@ async function profitBy(address: string, dateConverter: (locktime: number) => an
     domain = "api.plcux.io/api";
   }
   
-  const data: any = await fetch(`https://${domain}/v2/public/address?id=${address}&page=0&size=1000`).then((r) =>
-    r.json()
-  );
+  const data: any = await axios.get(`https://${domain}/v2/public/address?id=${address}&page=0&size=1000`);
   
   const outputs = data.data.tx
     .filter((tx: any) => tx.type == "MINTING_CONTRACT")

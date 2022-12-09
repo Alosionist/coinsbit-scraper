@@ -8,12 +8,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.profitByMonth = exports.profitByDay = void 0;
-const node_fetch_1 = __importDefault(require("node-fetch"));
+const axios = require("axios");
 const groupBy = require("group-by-with-sum");
 function profitByDay(address, type) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -33,7 +30,7 @@ function profitBy(address, dateConverter, type) {
         if (type === "x") {
             domain = "api.plcux.io/api";
         }
-        const data = yield (0, node_fetch_1.default)(`https://${domain}/v2/public/address?id=${address}&page=0&size=1000`).then((r) => r.json());
+        const data = yield axios.get(`https://${domain}/v2/public/address?id=${address}&page=0&size=1000`);
         const outputs = data.data.tx
             .filter((tx) => tx.type == "MINTING_CONTRACT")
             .flatMap((c) => c.outputs.filter((o) => o.address == c.minting.benAddress))
