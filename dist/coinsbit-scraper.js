@@ -134,12 +134,6 @@ function merge(market, first, second) {
     for (let i = 0; i < first.length - 1 && i < second.length - 1; i++) {
         if (first[i].time !== second[i].time) {
             console.log(i);
-            console.log(first[156]);
-            console.log(second[156]);
-            console.log(first[157]);
-            console.log(second[157]);
-            console.log(first[158]);
-            console.log(second[158]);
             console.log(first[i].time);
             console.log(second[i].time);
             return false;

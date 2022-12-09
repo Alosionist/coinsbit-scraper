@@ -1,3 +1,4 @@
+import fetch from 'node-fetch';
 const groupBy = require("group-by-with-sum");
 
 export async function profitByDay(address: string, type: string) {
@@ -14,7 +15,7 @@ async function profitBy(address: string, dateConverter: (locktime: number) => an
     domain = "api.plcux.io/api";
   }
   
-  const data = await fetch(`https://${domain}/v2/public/address?id=${address}&page=0&size=1000`).then((r) =>
+  const data: any = await fetch(`https://${domain}/v2/public/address?id=${address}&page=0&size=1000`).then((r) =>
     r.json()
   );
   

@@ -72,6 +72,7 @@ app.get("/api/explorer", (req, res) => __awaiter(void 0, void 0, void 0, functio
         }
     }
     catch (e) {
+        console.error(e);
         res.status(500).send(SERVER_ERROR);
     }
 }));
