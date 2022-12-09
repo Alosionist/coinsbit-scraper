@@ -1,14 +1,30 @@
 <div class="page">
   <h1>{{ marketNameView }}</h1>
-  <button type="button" class="btn btn-primary" (click)="refresh()">{{refreshBtnText}}</button>
-  <button
-    *ngFor="let b of buttons; index as i"
-    type="button"
-    class="btn"
-    [class]="b.class"
-    (click)="changeTimeRange(i)"
-  >
-    {{ b.text }}
-  </button>
+  <div class="row">
+    <div class="col-5">
+      Interval:
+      <button
+        *ngFor="let b of intervalButtons; index as i"
+        type="button"
+        class="btn"
+        [class]="b.class"
+        (click)="changeInterval(i)"
+      >
+        {{ b.text }}
+      </button>
+    </div>
+    <div class="col-6">
+      TimeRange:
+      <button
+        *ngFor="let b of timeButtons; index as i"
+        type="button"
+        class="btn"
+        [class]="b.class"
+        (click)="changeTimeRange(i)"
+      >
+        {{ b.text }}
+      </button>
+    </div>
+  </div>
   <canvas id="MyChart">{{ chart }}</canvas>
 </div>

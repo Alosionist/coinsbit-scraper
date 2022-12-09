@@ -32,8 +32,4 @@ export class AppComponent implements OnInit {
   onMarketChoosen(marketName: string): void {
     this.marketName = marketName;
   }
-
-  update() {
-    this.getMarkets();
-  }
 }

@@ -1,15 +1,20 @@
 const groupBy = require("group-by-with-sum");
 
-export async function profitByDay(address: string) {
-  return await profitBy(address, (t) => new Date(t).toLocaleDateString());
+export async function profitByDay(address: string, type: string) {
+  return await profitBy(address, (t) => new Date(t).toLocaleDateString(), type);
 }
 
-export async function profitByMonth(address: string) {
-  return await profitBy(address, (t) => `${new Date(t).getMonth() + 1}/${new Date(t).getFullYear()}`);
+export async function profitByMonth(address: string, type: string) {
+  return await profitBy(address, (t) => `${new Date(t).getMonth() + 1}/${new Date(t).getFullYear()}`, type);
 }
 
-async function profitBy(address: string, dateConverter: (locktime: number) => any) {  
-  const data = await fetch(`https://api.plcultima.info/v2/public/address?id=${address}&page=0&size=1000`).then((r) =>
+async function profitBy(address: string, dateConverter: (locktime: number) => any, type: string) {
+  let domain = "api.plcultima.info";
+  if (type === "x") {
+    domain = "api.plcux.io/api";
+  }
+  
+  const data = await fetch(`https://${domain}/v2/public/address?id=${address}&page=0&size=1000`).then((r) =>
     r.json()
   );
   

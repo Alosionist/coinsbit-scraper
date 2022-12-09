@@ -15,14 +15,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getHistory = exports.insertDataPoint = void 0;
 const mongodb_1 = require("mongodb");
 const dotenv_1 = __importDefault(require("dotenv"));
+// Deprecated
 dotenv_1.default.config();
 let db, histroy;
 const URL = process.env.MONGO_URL || 'mongodb://localhost:27017';
 const client = new mongodb_1.MongoClient(URL);
-client.connect().then(() => {
-    db = client.db("coinsbit");
-    histroy = db.collection("histroy");
-});
+// client.connect().then(() => {
+//     db = client.db("coinsbit")
+//     histroy = db.collection("histroy")
+//   }
+// )
 function insertDataPoint(dataPoint) {
     histroy.insertOne(dataPoint);
 }

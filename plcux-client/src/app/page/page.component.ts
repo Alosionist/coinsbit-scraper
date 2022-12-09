@@ -16,7 +16,7 @@ import 'chartjs-adapter-date-fns';
 interface Button {
   text: string;
   class: string;
-  time: number;
+  interval: number;
 }
 
 @Component({
@@ -25,16 +25,17 @@ interface Button {
   styleUrls: ['./page.component.css'],
 })
 export class PageComponent implements OnInit, OnChanges {
-  private readonly HOUR = 60 * 60 * 1000;
+  private readonly HOUR = 60 * 60;
   private readonly DAY = this.HOUR * 24;
   private readonly WEEK = this.DAY * 7;
+  private readonly MONTH = this.DAY * 30;
   @Input() marketName: string = '';
-  @Output() update: EventEmitter<string> = new EventEmitter();
 
   history: Array<DataPoint> = [];
-  buttons: Button[];
-  currentButtonIndex: number = 2;
-  refreshBtnText = 'Refresh'
+  intervalButtons: Button[];
+  timeButtons: Button[];
+  currentIntervalButtonIndex: number = 2;
+  currentTimeRangeButtonIndex: number = 1;
   public chart: Chart;
   datasets: any;
   marketNameView: string;
@@ -42,34 +43,57 @@ export class PageComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.createChart();
-    this.buttons = [
+    this.intervalButtons = [
       {
         text: '1H',
         class: 'btn-outline-secondary',
-        time: this.HOUR,
+        interval: this.HOUR,
       },
       {
         text: '4H',
         class: 'btn-outline-secondary',
-        time: this.HOUR * 4,
+        interval: this.HOUR * 4,
       },
       {
         text: '1D',
-        class: 'btn-secondary',
-        time: this.DAY,
+        class: 'btn-outline-secondary',
+        interval: this.DAY,
       },
       {
         text: '1W',
         class: 'btn-outline-secondary',
-        time: this.WEEK,
-      },
-      {
-        text: 'All',
-        class: 'btn-outline-secondary',
-        time: Date.now(),
+        interval: this.WEEK,
       }
     ];
-    this.updateChartData(Date.now() - this.buttons[this.currentButtonIndex].time);
+
+    this.timeButtons = [
+      {
+        text: '7D',
+        class: 'btn-outline-secondary',
+        interval: this.WEEK,
+      },
+      {
+        text: '30D',
+        class: 'btn-outline-secondary',
+        interval: this.MONTH,
+      },
+      {
+        text: '90D',
+        class: 'btn-outline-secondary',
+        interval: this.MONTH * 3,
+      },
+      {
+        text: '180D',
+        class: 'btn-outline-secondary',
+        interval: this.MONTH * 6,
+      }
+    ];
+    this.intervalButtons[this.currentIntervalButtonIndex].class = 'btn-secondary';
+    this.timeButtons[this.currentTimeRangeButtonIndex].class = 'btn-secondary';
+    this.updateChartData(
+      Date.now() - this.timeButtons[this.currentTimeRangeButtonIndex].interval * 1000,
+      Date.now(),
+      this.intervalButtons[this.currentIntervalButtonIndex].interval);
     this.changeNameView();
   }
 
@@ -107,7 +131,10 @@ export class PageComponent implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges) {
     if (this.marketName && this.marketName !== '') {
       this.changeNameView();
-      this.updateChartData(Date.now() - this.buttons[this.currentButtonIndex].time);
+      this.updateChartData(
+        Date.now() - this.timeButtons[this.currentTimeRangeButtonIndex].interval * 1000,
+        Date.now(),
+        this.intervalButtons[this.currentIntervalButtonIndex].interval);
     }
   }
 
@@ -118,22 +145,29 @@ export class PageComponent implements OnInit, OnChanges {
     this.chart.update();
   }
 
+  changeInterval(b: number) {
+    this.intervalButtons[this.currentIntervalButtonIndex].class = 'btn-outline-secondary'
+    this.intervalButtons[b].class = 'btn-secondary'
+    this.currentIntervalButtonIndex = b;
+    this.updateChartData(
+      Date.now() - this.timeButtons[this.currentTimeRangeButtonIndex].interval * 1000,
+      Date.now(),
+      this.intervalButtons[this.currentIntervalButtonIndex].interval);
+  }
+
   changeTimeRange(b: number) {
-    this.buttons[this.currentButtonIndex].class = 'btn-outline-secondary'
-    this.buttons[b].class = 'btn-secondary'
-    this.currentButtonIndex = b;
-    this.updateChartData(Date.now() - this.buttons[this.currentButtonIndex].time);
+    this.timeButtons[this.currentTimeRangeButtonIndex].class = 'btn-outline-secondary'
+    this.timeButtons[b].class = 'btn-secondary'
+    this.currentTimeRangeButtonIndex = b;
+    this.updateChartData(
+      Date.now() - this.timeButtons[this.currentTimeRangeButtonIndex].interval * 1000,
+      Date.now(),
+      this.intervalButtons[this.currentIntervalButtonIndex].interval);
   }
 
-  refresh() {
-    this.updateChartData(Date.now() - this.buttons[this.currentButtonIndex].time);
-    this.update.emit("magic!");
-  }
-
-  private updateChartData(from: number) {
-
+  private updateChartData(from: number, to: number, interval: number) {
     this.apiService
-      .getHistory(this.marketName, from)
+      .getHistory(this.marketName, from, to, interval)
       .subscribe((history: DataPoint[]) => {
         this.history = history;
         this.chart.data.datasets[0].data = this.historyToChartData(history);

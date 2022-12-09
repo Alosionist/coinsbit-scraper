@@ -5,6 +5,8 @@ import { Market } from './models/Market';
 import { average } from './utils';
 import { insertDataPoint } from './db';
 
+// Deprecated
+
 dotenv.config();
 const URL = 'wss://ws.coinsbit.io/';
 const MARKETS = process.env.MARKETS?.split(',') || [];
@@ -64,7 +66,7 @@ function connect() {
   function addDataToDb() {
     const dataPointTime = new Date();
     cachedMarkets.forEach((prices: number[], marketName: string) => {
-      insertDataPoint({ market: marketName, price: average(prices), time: dataPointTime });
+      insertDataPoint({ market: marketName, price: average(prices), time: dataPointTime.getTime() });
     });
     console.log('data points for all markets were added with time: ', dataPointTime.toLocaleString());
   }

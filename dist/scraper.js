@@ -9,6 +9,7 @@ const ws_1 = __importDefault(require("ws"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const utils_1 = require("./utils");
 const db_1 = require("./db");
+// Deprecated
 dotenv_1.default.config();
 const URL = 'wss://ws.coinsbit.io/';
 const MARKETS = ((_a = process.env.MARKETS) === null || _a === void 0 ? void 0 : _a.split(',')) || [];
@@ -58,7 +59,7 @@ function connect() {
     function addDataToDb() {
         const dataPointTime = new Date();
         cachedMarkets.forEach((prices, marketName) => {
-            (0, db_1.insertDataPoint)({ market: marketName, price: (0, utils_1.average)(prices), time: dataPointTime });
+            (0, db_1.insertDataPoint)({ market: marketName, price: (0, utils_1.average)(prices), time: dataPointTime.getTime() });
         });
         console.log('data points for all markets were added with time: ', dataPointTime.toLocaleString());
     }

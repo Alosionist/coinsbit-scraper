@@ -1,55 +1,71 @@
-import express, { Express } from 'express';
-import dotenv from 'dotenv';
-import {startScraper, currentMarkets} from './scraper';
-import { getHistory } from './db';
-import { profitByDay, profitByMonth } from './explorer';
+import express, { Express } from "express";
+import dotenv from "dotenv";
+import { getCurrentPrice, getHistory, pollingPrices, COMPUTED_MARKETS } from "./coinsbit-scraper";
+import { profitByDay, profitByMonth } from "./explorer";
+import { DataPoint } from "./models/DataPoint";
+import { ErrorMessage } from "./models/ErrorMessage";
 
 dotenv.config();
 const app: Express = express();
 const PORT = process.env.PORT;
+const BAD_REQUEST: ErrorMessage = {code: 400, message: "bad request"};
+const SERVER_ERROR: ErrorMessage = {code: 500, message: "Failed"};
 
-startScraper();
+pollingPrices();
 
-app.use('/', express.static('dist/client'))
+app.use("/", express.static("dist/client"));
 
-app.get('/api/markets/:market', (req, res) => {
+app.get("/api/markets", (req, res) => {
+  const computed = COMPUTED_MARKETS.keys();
+  const markets = process.env.MARKETS?.split(",") || [];
+  res.json([...computed, ...markets]);
+});
+
+app.get("/api/markets/:market", (req, res) => {
   const market = req.params.market;
-  
-  if (!currentMarkets.has(market)) {
-    res.status(404).send('Not found');
+
+  const price = getCurrentPrice(market);
+  if (price) {
+    res.json({ market, price });
   } else {
-    res.json({ market, price: currentMarkets.get(market) });
+    res.status(500).send(SERVER_ERROR);
   }
 });
 
-app.get('/api/markets/:market/history', async (req, res) => {
+app.get("/api/markets/:market/history", async (req, res) => {
   const market = req.params.market;
-  const from = new Date(Number(req.query.from) || Date.now() - 86400000);
-  const to = new Date(Number(req.query.to) || Date.now())
+  const from = Number(req.query.from);
+  const to = Number(req.query.to);
+  const interval = Number(req.query.interval);
 
-  res.json(await getHistory(market, from, to))
+  getHistory(market, from, to, interval)
+    .then((datapoints: DataPoint[] | boolean) => {
+      if (datapoints) {
+        res.json(datapoints);
+      } else {
+        res.status(500).send(SERVER_ERROR);
+      }
+    })
+    .catch((statusCode) => res.status(statusCode).send({code: statusCode, message: "Failed"}));
 });
 
-app.get('/api/markets', (req, res) => {
-  res.json(Array.from(currentMarkets.keys()));
-});
-
-app.get('/api/explorer', async (req, res) => {
+app.get("/api/explorer", async (req, res) => {
   try {
-    const address = req.query.addr?.toString() || '';
-    const by = req.query.by?.toString() || 'day';
-    if (by === 'day' && address !== '') {
-      res.json(await profitByDay(address));
-    } else if (by === 'month' && address !== '') {
-      res.json(await profitByMonth(address));
+    const address = req.query.addr?.toString() || "";
+    const by = req.query.by?.toString() || "day";
+    const type = req.query.type?.toString() || "u"
+    if (by === "day" && address !== "") {
+      res.json(await profitByDay(address, type));
+    } else if (by === "month" && address !== "") {
+      res.json(await profitByMonth(address, type));
     } else {
-      res.status(400).send('bad request');
+      res.status(400).send(BAD_REQUEST);
     }
   } catch (e) {
-    res.status(500).send('failed');
+    res.status(500).send(SERVER_ERROR);
   }
 });
 
 app.listen(PORT, () => {
-  console.log('Server running on port ' + PORT);
+  console.log("Server running on port " + PORT);
 });
